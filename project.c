@@ -6,8 +6,7 @@
 
 /* ------------Global variables------------ */
 
-int countProduit = 0, second = 4, countAchat=0;
-
+int countProduit = 0, second = 4, countAchat = 0;
 
 /* ----------------Structers--------------- */
 
@@ -20,11 +19,13 @@ struct produit
 
 struct achat
 {
+  //  time_t t = time(NULL);
+
+
     int quantite;
     float prix, prixTTC;
     char nom[80], code[10];
-    struct tm dateAchat;
-   // struct tm tm = *localtime(&t);
+ //   struct tm dateAchat = *localtime(&t);
 };
 
 /* ----------------Function---------------- */
@@ -45,7 +46,6 @@ void continu()
     getch();
 }
 
-
 void printProduits(struct produit *allProduit)
 {
     for (int i = 0; i < countProduit; i++)
@@ -56,38 +56,56 @@ void printProduits(struct produit *allProduit)
         printf("\nNom \t: %s", allProduit[i].nom);
         printf("\nPrix\t: %.2lf DHs", allProduit[i].prix);
         printf("\nPrix TTC: %.2lf DHs", allProduit[i].prix + (allProduit[i].prix * 0.15));
-        printf("\nQuantite: %d", allProduit[i].quantite );
+        printf("\nQuantite: %d", allProduit[i].quantite);
     }
 }
-
 
 void printProduit(struct achat *allProduit, int x)
 {
 
-        lineBreak();
-        printf("\n*-----------Produit numero : %d -----------*", x+1 );
-        lineBreak();
-        printf("\nNom \t: %s", allProduit[x].nom);
-        printf("\nCode \t: %s", allProduit[x].code);
-        printf("\nPrix\t: %.2lf DHs", allProduit[x].prix);
-        printf("\nPrix TTC: %.2lf DHs", allProduit[x].prix + (allProduit[x].prix * 0.15));
-        printf("\nQuantite: %d", allProduit[x].quantite );
-        getch();
+    lineBreak();
+    printf("\n*-----------Produit numero : %d -----------*", x + 1);
+    lineBreak();
+    printf("\nNom \t: %s", allProduit[x].nom);
+    printf("\nCode \t: %s", allProduit[x].code);
+    printf("\nPrix\t: %.2lf DHs", allProduit[x].prix);
+    printf("\nPrix TTC: %.2lf DHs", allProduit[x].prix + (allProduit[x].prix * 0.15));
+    printf("\nQuantite: %d", allProduit[x].quantite);
+    getch();
+}
 
+void printEtat(struct produit *allProduit, int x)
+{
+    if (x > 0)
+    {
+        for (int i = 0; i < x - 1; i++)
+        {
+            lineBreak();
+            printf("\n*-----------Produit numero : %d -----------*", i + 1);
+            lineBreak();
+            printf("\nNom \t: %s", allProduit[i].nom);
+            printf("\nPrix\t: %.2lf DHs", allProduit[i].prix);
+            printf("\nPrix TTC: %.2lf DHs", allProduit[i].prix + (allProduit[i].prix * 0.15));
+            printf("\nQuantite: %d", allProduit[i].quantite);
+        }
+    }
+    else
+    {
+        printf("Vide !!");
+    }
 }
 
 void printAchat(struct achat *allAchat)
 {
-        lineBreak();
-        printf("\n*-----------Achat numero : %d -----------*", countAchat);
-        lineBreak();
-        printf("\nNom \t: %s", allAchat[countAchat-1].nom);
-        printf("\nCode\t: %s", allAchat[countAchat-1].code);
-        printf("\nPrix\t: %.2lf DHs", allAchat[countAchat-1].prix);
-        printf("\nPrix TTC: %.2lf DHs", allAchat[countAchat-1].prixTTC);
-        printf("\nDate: %d-%02d-%02d %02d:%02d:%02d", allAchat[countAchat-1].dateAchat.tm_year+1900,allAchat[countAchat-1].dateAchat.tm_mon+1,allAchat[countAchat-1].dateAchat.tm_mday,allAchat[countAchat-1].dateAchat.tm_hour,allAchat[countAchat-1].dateAchat.tm_min,allAchat[countAchat-1].dateAchat.tm_sec);
-        getch();
-
+    lineBreak();
+    printf("\n*-----------Achat numero : %d -----------*", countAchat);
+    lineBreak();
+    printf("\nNom \t: %s", allAchat[countAchat - 1].nom);
+    printf("\nCode\t: %s", allAchat[countAchat - 1].code);
+    printf("\nPrix\t: %.2lf DHs", allAchat[countAchat - 1].prix);
+    printf("\nPrix TTC: %.2lf DHs", allAchat[countAchat - 1].prixTTC);
+ //   printf("\nDate: %d-%02d-%02d %02d:%02d:%02d", allAchat[countAchat - 1].dateAchat.tm_year + 1900, allAchat[countAchat - 1].dateAchat.tm_mon + 1, allAchat[countAchat - 1].dateAchat.tm_mday, allAchat[countAchat - 1].dateAchat.tm_hour, allAchat[countAchat - 1].dateAchat.tm_min, allAchat[countAchat - 1].dateAchat.tm_sec);
+    getch();
 }
 
 void ajouterProduit(struct produit *allProduit)
@@ -123,46 +141,49 @@ void ajouterProduit(struct produit *allProduit)
     } while (a == 1);
 }
 
-void acheterProduit(struct produit *allProduit, struct achat *allAchat,time_t *t)
+void acheterProduit(struct produit *allProduit, struct achat *allAchat)
 {
     char code[20];
     int quantite, indice;
     printf("Saisir la code de produit : ");
-    scanf("%s",code);
+    scanf("%s", code);
     printf("Saisir la quantite de produit : ");
-    scanf("%s",&quantite);
-    indice=updateProduit(allProduit,code,quantite);
-
-    if(indice>=0){
-
-        strcpy(allAchat[countAchat].code,allProduit[indice].code);
-        strcpy(allAchat[countAchat].nom,allProduit[indice].nom);
-        allAchat[countAchat].prix=allProduit[indice].prix;
-        allAchat[countAchat].prixTTC=allProduit[indice].prix+ (allProduit[indice].prix * 0.15);
-        allAchat[countAchat].quantite=quantite;
-        allAchat[countAchat].dateAchat=*localtime(&t);
+    scanf("%s", &quantite);
+    indice = updateProduit(allProduit, code, quantite);
+    if (indice >= 0)
+    {
+        strcpy(allAchat[countAchat].code, allProduit[indice].code);
+        strcpy(allAchat[countAchat].nom, allProduit[indice].nom);
+        allAchat[countAchat].prix = allProduit[indice].prix;
+        allAchat[countAchat].prixTTC = allProduit[indice].prix + (allProduit[indice].prix * 0.15);
+        allAchat[countAchat].quantite = quantite;
+   //     allAchat[countAchat].dateAchat = *localtime(&tm);
 
         countAchat++;
         printAchat(allAchat);
-
-    }else{
+    }
+    else
+    {
         printf("Aucun produit par se code .");
         getch();
     }
 }
 
-int updateProduit(struct produit *allProduit,char code[20], int quantit)
+int updateProduit(struct produit *allProduit, char code[20], int quantit)
 {
-    int x=-1;
-    for(int i=0;i<countProduit;i++){
-        if(strcmp(allProduit[i].code,code)==0){
-            x=i;
+    int x = -1;
+    for (int i = 0; i < countProduit; i++)
+    {
+        if (strcmp(allProduit[i].code, code) == 0)
+        {
+            x = i;
         }
     }
-    if(x>=0){
-        allProduit[x].quantite=allProduit[x].quantite-quantit;
+    if (x >= 0)
+    {
+        allProduit[x].quantite -= quantit;
     }
-     return x;
+    return x;
 }
 
 void listerProduits(struct produit *allProduit)
@@ -290,26 +311,127 @@ void listerProduitsParNom(struct produit *allProduit)
     continu();
 }
 
-void RechercheProduit(struct produit *allProduit)
+void etatProduit(struct produit *allProduit)
 {
-    int x=-1;
-    char code[30];
-    printf("\nSaisir le code de produit: ");
-    scanf("%s",&code);
-    for(int i=0;i<countProduit;i++){
-        if(strcmp(allProduit[i].code,code)==0){
-            x=i;
+    cleanConsole();
+    struct produit etatProduit[100];
+    int a = 0;
+    for (int i = 0; i <= countProduit; i++)
+    {
+        if (allProduit[i].quantite < 3 && countProduit != 0)
+        {
+            // copie le produit dans un variable temporaire
+            strcpy(etatProduit[a].nom, allProduit[i].nom);
+            strcpy(etatProduit[a].code, allProduit[i].code);
+            etatProduit[a].prix = allProduit[i].prix;
+            etatProduit[a].quantite = allProduit[i].quantite;
+            a++;
         }
     }
 
-    if(x>=0){
+    printEtat(&etatProduit, a);
+
+    lineBreak();
+    lineBreak();
+    continu();
+}
+
+void rechercheProduit(struct produit *allProduit)
+{
+    int x = -1;
+    char code[30];
+    printf("\nSaisir le code de produit: ");
+    scanf("%s", code);
+    for (int i = 0; i < countProduit; i++)
+    {
+        if (strcmp(allProduit[i].code, code) == 0)
+        {
+            x = i;
+        }
+    }
+
+    if (x >= 0)
+    {
         printProduit(allProduit, x);
-    }else{
+    }
+    else
+    {
         printf("Erreur");
         getch;
     }
 }
-void menu(struct produit *allProduit, struct achat *allAchat, time_t *t)
+
+void alimenterProduit(struct produit *allProduit)
+{
+    char code[30];
+    int qunatite, x = -1;
+    printf("\nSaisie le code de produit : ");
+    scanf("%s", code);
+    printf("Saisir la qunatite : ");
+    scanf("%d", &qunatite);
+    for (int i = 0; i < countProduit; i++)
+    {
+        if (strcmp(allProduit[i].code, code) == 0)
+        {
+            x = i;
+        }
+    }
+    if (x >= 0)
+    {
+        allProduit[x].quantite += qunatite;
+    }
+    else
+    {
+        printf("Aucun produit par se code.");
+        getch();
+    }
+}
+
+void supprimerProduit(struct produit *allProduit)
+{
+    char code[30];
+    int x = -1;
+    printf("Saisir le code de produit pour supprimer : ");
+    scanf("%s", code);
+    for (int i = 0; i < countProduit; i++)
+    {
+        if (strcmp(allProduit[i].code, code) == 0)
+        {
+            x = i;
+        }
+    }
+    if (x >= 0)
+    {
+        for (int i = x; i < countProduit; i++)
+        {
+            strcpy(allProduit[i].nom, allProduit[i + 1].nom);
+            strcpy(allProduit[i].code, allProduit[i + 1].code);
+            allProduit[i].prix = allProduit[i + 1].prix;
+            allProduit[i].quantite = allProduit[i + 1].quantite;
+        }
+        countProduit--;
+        cleanConsole();
+        lineBreak();
+        printf("\nLe produit '%s' est supprimer avec succes", code);
+        lineBreak();
+        getch();
+    }
+}
+
+void statistique(struct produit *allProduit, struct achat *allAchat)
+{
+    float totalAchat = 0;
+  //  for (int i = 0; i < countAchat; i++)
+    //{
+      //  if (allAchat[i].dateAchat == *localtime(&t))
+        //{
+          //  totalAchat += allAchat[i].dateAchat;
+//        }
+  //  }
+    printf("%.2lf", totalAchat);
+}
+
+void menu(struct produit *allProduit, struct achat *allAchat)
 {
     int a;
     do
@@ -339,22 +461,22 @@ void menu(struct produit *allProduit, struct achat *allAchat, time_t *t)
             listerProduits(allProduit);
             break;
         case 3:
-            acheterProduit(allProduit,allAchat,t);
+            acheterProduit(allProduit, allAchat);
             break;
         case 4:
-            RechercheProduit(allProduit);
+            rechercheProduit(allProduit);
             break;
         case 5:
-            // etat de stock
+            etatProduit(allProduit);
             break;
         case 6:
-            // Alimenter le stock
+            alimenterProduit(allProduit);
             break;
         case 7:
-            // Supprimer un produit
+            supprimerProduit(allProduit);
             break;
         case 8:
-            //statistique de vente
+            statistique(allProduit, allAchat);
             break;
         case 9:
             exit(0);
@@ -369,7 +491,8 @@ void main()
 {
     struct produit allProduit[100];
     struct achat allAchat[100];
-    time_t t = time(NULL);
-
-    menu(&allProduit,&allAchat,&t);
+    // time_t t = time(NULL);
+    //   time_t t; // not a primitive datatype
+    // time(&t);
+    menu(&allProduit, &allAchat);
 }
