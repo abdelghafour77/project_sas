@@ -45,21 +45,8 @@ void continu()
     getch();
 }
 
-// void printProduit(struct produit *allProduit)
-// {
-//     for (int i = 0; i < count; i++)
-//     {
-//         lineBreak();
-//         printf("\n*-----------Produit number : %d -----------*", i + 1);
-//         lineBreak();
-//         printf("\nLe code de produit\t: %s", allProduit[i].code);
-//         printf("\nLe nom de produit\t: %s", allProduit[i].nom);
-//         printf("\nLa quantite de produit\t: %d", allProduit[i].quantite);
-//         printf("\nLe prix de produit\t: %lf", allProduit[i].prix);
-//     }
-// }
 
-void printProduit(struct produit *allProduit)
+void printProduits(struct produit *allProduit)
 {
     for (int i = 0; i < countProduit; i++)
     {
@@ -71,6 +58,22 @@ void printProduit(struct produit *allProduit)
         printf("\nPrix TTC: %.2lf DHs", allProduit[i].prix + (allProduit[i].prix * 0.15));
         printf("\nQuantite: %d", allProduit[i].quantite );
     }
+}
+
+
+void printProduit(struct achat *allProduit, int x)
+{
+
+        lineBreak();
+        printf("\n*-----------Produit numero : %d -----------*", x+1 );
+        lineBreak();
+        printf("\nNom \t: %s", allProduit[x].nom);
+        printf("\nCode \t: %s", allProduit[x].code);
+        printf("\nPrix\t: %.2lf DHs", allProduit[x].prix);
+        printf("\nPrix TTC: %.2lf DHs", allProduit[x].prix + (allProduit[x].prix * 0.15));
+        printf("\nQuantite: %d", allProduit[x].quantite );
+        getch();
+
 }
 
 void printAchat(struct achat *allAchat)
@@ -101,13 +104,13 @@ void ajouterProduit(struct produit *allProduit)
         printf("\nCode de produit\t: ");
         scanf("%s", &allProduit[countProduit].code);
 
-        printf("\nNom de produit\t: ");
+        printf("Nom de produit\t: ");
         scanf("%s", &allProduit[countProduit].nom);
 
-        printf("\nQuantite de produit\t: ");
+        printf("Quantite de produit\t: ");
         scanf("%d", &allProduit[countProduit].quantite);
 
-        printf("\nPrix de produit\t: ");
+        printf("Prix de produit\t: ");
         scanf("%f", &allProduit[countProduit].prix);
 
         lineBreak();
@@ -234,7 +237,7 @@ void listerProduitsParPrix(struct produit *allProduit)
         }
     }
 
-    printProduit(triProduit);
+    printProduits(triProduit);
 
     lineBreak();
     lineBreak();
@@ -280,11 +283,31 @@ void listerProduitsParNom(struct produit *allProduit)
         }
     }
 
-    printProduit(triProduit);
+    printProduits(triProduit);
 
     lineBreak();
     lineBreak();
     continu();
+}
+
+void RechercheProduit(struct produit *allProduit)
+{
+    int x=-1;
+    char code[30];
+    printf("\nSaisir le code de produit: ");
+    scanf("%s",&code);
+    for(int i=0;i<countProduit;i++){
+        if(strcmp(allProduit[i].code,code)==0){
+            x=i;
+        }
+    }
+
+    if(x>=0){
+        printProduit(allProduit, x);
+    }else{
+        printf("Erreur");
+        getch;
+    }
 }
 void menu(struct produit *allProduit, struct achat *allAchat, time_t *t)
 {
@@ -298,9 +321,14 @@ void menu(struct produit *allProduit, struct achat *allAchat, time_t *t)
         printf("\n\t1- Ajouter produit .\n");
         printf("\t2- Lister tout les produits .\n");
         printf("\t3- Acheter un produit .\n");
-        printf("\t4- Exit .\n");
+        printf("\t4- Recherche .\n");
+        printf("\t5- Etat du stock .\n");
+        printf("\t6- Alimenter le stock .\n");
+        printf("\t7- Supprimer un produit .\n");
+        printf("\t8- Statistique de vente .\n");
+        printf("\t9- Exit .\n");
         printf("*-----------------------------------------*\n");
-        printf("Choisir un numero : ");
+        printf("=>");
         scanf("%d", &a);
         switch (a)
         {
@@ -314,6 +342,21 @@ void menu(struct produit *allProduit, struct achat *allAchat, time_t *t)
             acheterProduit(allProduit,allAchat,t);
             break;
         case 4:
+            RechercheProduit(allProduit);
+            break;
+        case 5:
+            // etat de stock
+            break;
+        case 6:
+            // Alimenter le stock
+            break;
+        case 7:
+            // Supprimer un produit
+            break;
+        case 8:
+            //statistique de vente
+            break;
+        case 9:
             exit(0);
             break;
         default:
