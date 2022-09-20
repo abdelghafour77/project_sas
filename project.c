@@ -140,31 +140,47 @@ void ajouterProduit(struct produit *allProduit)
 void acheterProduit(struct produit *allProduit, struct achat *allAchat)
 {
     char code[20];
-    int quantite, indice;
+    int quantite, indice = -1;
     printf("Saisir la code de produit : ");
     scanf("%s", code);
     printf("Saisir la quantite de produit : ");
-    scanf("%s", &quantite);
+    scanf("%d", &quantite);
     indice = updateProduit(allProduit, code, quantite);
+    //
+    for (int i = 0; i < countProduit; i++)
+    {
+        if (strcmp(allProduit[i].code, code) == 0)
+        {
+            indice = i;
+        }
+    }
     if (indice >= 0)
     {
-        time_t seconds = time(NULL);
-        struct tm *current_time = localtime(&seconds);
-        strcpy(allAchat[countAchat].code, allProduit[indice].code);
-        strcpy(allAchat[countAchat].nom, allProduit[indice].nom);
-        allAchat[countAchat].prix = allProduit[indice].prix;
-        allAchat[countAchat].prixTTC = allProduit[indice].prix + (allProduit[indice].prix * 0.15);
-        allAchat[countAchat].quantite = quantite;
-        allAchat[countAchat].year = current_time->tm_year + 1900;
-        allAchat[countAchat].month = current_time->tm_mon + 1;
-        allAchat[countAchat].day = current_time->tm_mday;
+        if (quantite > allProduit[indice].quantite)
+        {
+            lineBreak();
+            printf("\nQauntite insuffisant !!");
+            lineBreak();
+            getch();
+        }
+        else
+        {
+            allProduit[indice].quantite -= quantite;
 
-        //     printf("%d/%d/%d",allAchat[countAchat].day,allAchat[countAchat].month,allAchat[countAchat].year);
-        //     getch();
-        //     allAchat[countAchat].dateAchat = *localtime(&tm);
+            time_t seconds = time(NULL);
+            struct tm *current_time = localtime(&seconds);
 
-        countAchat++;
-        printAchat(allAchat);
+            strcpy(allAchat[countAchat].code, allProduit[indice].code);
+            strcpy(allAchat[countAchat].nom, allProduit[indice].nom);
+            allAchat[countAchat].prix = allProduit[indice].prix;
+            allAchat[countAchat].prixTTC = allProduit[indice].prix + (allProduit[indice].prix * 0.15);
+            allAchat[countAchat].quantite = quantite;
+            allAchat[countAchat].year = current_time->tm_year + 1900;
+            allAchat[countAchat].month = current_time->tm_mon + 1;
+            allAchat[countAchat].day = current_time->tm_mday;
+            countAchat++;
+            printAchat(allAchat);
+        }
     }
     else
     {
@@ -185,7 +201,14 @@ int updateProduit(struct produit *allProduit, char code[20], int quantit)
     }
     if (x >= 0)
     {
-        allProduit[x].quantite -= quantit;
+        if (quantit > allProduit[x].quantite)
+        {
+            printf("\n \t Qauntite insuffisant !! ");
+        }
+        else
+        {
+            allProduit[x].quantite -= quantit;
+        }
     }
     return x;
 }
@@ -424,15 +447,32 @@ void supprimerProduit(struct produit *allProduit)
 
 void statistique(struct produit *allProduit, struct achat *allAchat)
 {
-    float totalAchat = 0;
-    //  for (int i = 0; i < countAchat; i++)
-    //{
-    //  if (allAchat[i].dateAchat == *localtime(&t))
-    //{
-    //  totalAchat += allAchat[i].dateAchat;
-    //        }
-    //  }
-    printf("%.2lf", totalAchat);
+    float totalAchat = 0, totalAchatTTC = 0, quantite = 0;
+    int year, day, month;
+    time_t seconds = time(NULL);
+    struct tm *current_time = localtime(&seconds);
+    year = current_time->tm_year + 1900;
+    month = current_time->tm_mon + 1;
+    day = current_time->tm_mday;
+    for (int i = 0; i < countAchat; i++)
+    {
+        if (allAchat[i].year == year && allAchat[i].month == month && allAchat[i].day == day)
+        {
+            totalAchat += allAchat[i].prix * allAchat[i].quantite;
+            totalAchatTTC += allAchat[i].prixTTC * allAchat[i].quantite;
+            quantite += allAchat[i].quantite;
+        }
+    }
+    lineBreak();
+    printf("\nLe total des prix des produits vendus en journee courante");
+    lineBreak();
+    printf("\nTotal: %.2lf\nTotalTTC: %.2lf", totalAchat, totalAchatTTC);
+
+    lineBreak();
+    printf("\nLa moyenne des prix des produits vendus en journee courante");
+    lineBreak();
+    printf("\nMoyen total: %.2lf\nMoyen totalTTC: %.2lf", totalAchat / quantite, totalAchatTTC / quantite);
+    getch();
 }
 
 void menu(struct produit *allProduit, struct achat *allAchat)
