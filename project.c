@@ -87,7 +87,8 @@ void printEtat(struct produit *allProduit, int x)
     }
     else
     {
-        printf("Vide !!");
+        system("color 4");
+        printf("Aucun produit !!");
     }
 }
 
@@ -100,12 +101,12 @@ void printAchat(struct achat *allAchat)
     printf("\nCode\t: %s", allAchat[countAchat - 1].code);
     printf("\nPrix\t: %.2lf DHs", allAchat[countAchat - 1].prix);
     printf("\nPrix TTC: %.2lf DHs", allAchat[countAchat - 1].prixTTC);
-    //   printf("\nDate: %d-%02d-%02d %02d:%02d:%02d", allAchat[countAchat - 1].dateAchat.tm_year + 1900, allAchat[countAchat - 1].dateAchat.tm_mon + 1, allAchat[countAchat - 1].dateAchat.tm_mday, allAchat[countAchat - 1].dateAchat.tm_hour, allAchat[countAchat - 1].dateAchat.tm_min, allAchat[countAchat - 1].dateAchat.tm_sec);
     getch();
 }
 
 void ajouterProduit(struct produit *allProduit)
 {
+
     int a;
     do
     {
@@ -158,6 +159,7 @@ void acheterProduit(struct produit *allProduit, struct achat *allAchat)
     {
         if (quantite > allProduit[indice].quantite)
         {
+            system("color 4");
             lineBreak();
             printf("\nQauntite insuffisant !!");
             lineBreak();
@@ -184,6 +186,7 @@ void acheterProduit(struct produit *allProduit, struct achat *allAchat)
     }
     else
     {
+        system("color 4");
         printf("Aucun produit par se code .");
         getch();
     }
@@ -203,6 +206,7 @@ int updateProduit(struct produit *allProduit, char code[20], int quantit)
     {
         if (quantit > allProduit[x].quantite)
         {
+            system("color 4");
             printf("\n \t Qauntite insuffisant !! ");
         }
         else
@@ -217,6 +221,7 @@ void listerProduits(struct produit *allProduit)
 {
     if (countProduit == 0)
     {
+        system("color 4");
         cleanConsole();
         lineBreak();
         printf("\n*--------------Aucun Produit -------------*");
@@ -382,6 +387,7 @@ void rechercheProduit(struct produit *allProduit)
     }
     else
     {
+        system("color 4");
         printf("Erreur");
         getch;
     }
@@ -408,6 +414,7 @@ void alimenterProduit(struct produit *allProduit)
     }
     else
     {
+        system("color 4");
         printf("Aucun produit par se code.");
         getch();
     }
@@ -438,6 +445,7 @@ void supprimerProduit(struct produit *allProduit)
         countProduit--;
         cleanConsole();
         lineBreak();
+        system("color 2");
         printf("\nLe produit '%s' est supprimer avec succes", code);
         lineBreak();
         getch();
@@ -466,12 +474,12 @@ void statistique(struct produit *allProduit, struct achat *allAchat)
                 totalAchatTTC += allAchat[i].prixTTC * allAchat[i].quantite;
                 quantite += allAchat[i].quantite;
 
-                if (allAchat[i].prix < prixMin)
+                if (allAchat[i].prix <= prixMin)
                 {
                     prixMin = allAchat[i].prix;
                     strcpy(nomMin, allAchat[i].nom);
                 }
-                if (allAchat[i].prix > prixMax)
+                if (allAchat[i].prix >= prixMax)
                 {
                     prixMax = allAchat[i].prix;
                     strcpy(nomMax, allAchat[i].nom);
@@ -517,6 +525,7 @@ void statistique(struct produit *allProduit, struct achat *allAchat)
     }
     else
     {
+        system("color 4");
         cleanConsole();
         lineBreak();
         printf("\n*--------Aucun Achat maintenant-----------*");
@@ -530,6 +539,7 @@ void menu(struct produit *allProduit, struct achat *allAchat)
     int a;
     do
     {
+        system("color 7");
         cleanConsole();
         lineBreak();
         printf("\n*------------------Menu-------------------*");
