@@ -447,32 +447,83 @@ void supprimerProduit(struct produit *allProduit)
 
 void statistique(struct produit *allProduit, struct achat *allAchat)
 {
-    float totalAchat = 0, totalAchatTTC = 0, quantite = 0;
-    int year, day, month;
-    time_t seconds = time(NULL);
-    struct tm *current_time = localtime(&seconds);
-    year = current_time->tm_year + 1900;
-    month = current_time->tm_mon + 1;
-    day = current_time->tm_mday;
-    for (int i = 0; i < countAchat; i++)
+    if (countAchat != 0)
     {
-        if (allAchat[i].year == year && allAchat[i].month == month && allAchat[i].day == day)
+        float totalAchat = 0, totalAchatTTC = 0, quantite = 0, minAchatQuantite = 0, maxAchatQuantite = 0;
+        int year, day, month, prixMin, prixMax;
+        prixMin = allAchat[0].prix;
+        prixMax = allAchat[0].prix;
+        char indiceMin[20], indiceMax[20], nomMax[80], nomMin[80];
+        time_t seconds = time(NULL);
+        struct tm *current_time = localtime(&seconds);
+        year = current_time->tm_year + 1900;
+        month = current_time->tm_mon + 1;
+        day = current_time->tm_mday;
+        for (int i = 0; i < countAchat; i++)
         {
-            totalAchat += allAchat[i].prix * allAchat[i].quantite;
-            totalAchatTTC += allAchat[i].prixTTC * allAchat[i].quantite;
-            quantite += allAchat[i].quantite;
-        }
-    }
-    lineBreak();
-    printf("\nLe total des prix des produits vendus en journee courante");
-    lineBreak();
-    printf("\nTotal: %.2lf\nTotalTTC: %.2lf", totalAchat, totalAchatTTC);
+            if (allAchat[i].year == year && allAchat[i].month == month && allAchat[i].day == day)
+            {
+                totalAchat += allAchat[i].prix * allAchat[i].quantite;
+                totalAchatTTC += allAchat[i].prixTTC * allAchat[i].quantite;
+                quantite += allAchat[i].quantite;
 
-    lineBreak();
-    printf("\nLa moyenne des prix des produits vendus en journee courante");
-    lineBreak();
-    printf("\nMoyen total: %.2lf\nMoyen totalTTC: %.2lf", totalAchat / quantite, totalAchatTTC / quantite);
-    getch();
+                if (allAchat[i].prix < prixMin)
+                {
+                    prixMin = allAchat[i].prix;
+                    strcpy(nomMin, allAchat[i].nom);
+                }
+                if (allAchat[i].prix > prixMax)
+                {
+                    prixMax = allAchat[i].prix;
+                    strcpy(nomMax, allAchat[i].nom);
+                }
+            }
+        }
+        for (int i = 0; i < countAchat; i++)
+        {
+
+            if (strcmp(allAchat[i].nom, nomMin) == 0)
+            {
+                minAchatQuantite += allAchat[i].quantite;
+                strcpy(nomMin, allAchat[i].nom);
+            }
+            if (strcmp(allAchat[i].nom, nomMax) == 0)
+            {
+                maxAchatQuantite += allAchat[i].quantite;
+                strcpy(nomMax, allAchat[i].nom);
+            }
+        }
+
+        lineBreak();
+        printf("\nLe total des prix des produits vendus en journee courante");
+        lineBreak();
+        printf("\nTotal: %.2lf\nTotalTTC: %.2lf", totalAchat, totalAchatTTC);
+
+        lineBreak();
+        printf("\nLa moyenne des prix des produits vendus en journee courante");
+        lineBreak();
+        printf("\nMoyen total: %.2lf\nMoyen total TTC: %.2lf\n", totalAchat / quantite, totalAchatTTC / quantite);
+
+        lineBreak();
+        printf("\nLe Max des prix des produits vendus en journee courante");
+        lineBreak();
+        printf("\nLe nom du produit : %s\nLe total : %.2lf\n\nLe total TTC: %.2lf\n", nomMax, maxAchatQuantite * prixMax, maxAchatQuantite * prixMax * 0.15);
+
+        lineBreak();
+        printf("\nLe Min des prix des produits vendus en journee courante");
+        lineBreak();
+        printf("\nLe nom du produit : %s\nLe total : %.2lf\n\nLe total TTC: %.2lf\n", nomMin, minAchatQuantite * prixMin, minAchatQuantite * prixMin * 0.15);
+
+        continu();
+    }
+    else
+    {
+        cleanConsole();
+        lineBreak();
+        printf("\n*--------Aucun Achat maintenant-----------*");
+        lineBreak();
+        continu();
+    }
 }
 
 void menu(struct produit *allProduit, struct achat *allAchat)
