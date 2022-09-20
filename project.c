@@ -376,7 +376,6 @@ void rechercheProduit(struct produit *allProduit)
             x = i;
         }
     }
-
     if (x >= 0)
     {
         printProduit(allProduit, x);
