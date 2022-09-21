@@ -4,12 +4,18 @@
 #include <string.h>
 #include <time.h>
 
-/* ------------Global variables------------ */
-
+/*
+-----------------------------------------------------
+----------------- GLOBAL VARIABLES ------------------
+-----------------------------------------------------
+*/
 int countProduit = 0, second = 4, countAchat = 0;
 
-/* ----------------Structers--------------- */
-
+/*
+-----------------------------------------------------
+-------------------- STRUCTERS ----------------------
+-----------------------------------------------------
+*/
 struct produit
 {
     int quantite;
@@ -25,8 +31,13 @@ struct achat
     int year, month, day;
 };
 
-/* ----------------Function---------------- */
+/*
+-----------------------------------------------------
+-------------------- FUNCTIONS ----------------------
+-----------------------------------------------------
+*/
 
+// ------------------- My function ------------------
 void lineBreak()
 {
     printf("\n*-----------------------------------------*");
@@ -43,6 +54,8 @@ void continu()
     getch();
 }
 
+// ------------ Print mutiple produit ---------------
+
 void printProduits(struct produit *allProduit)
 {
     for (int i = 0; i < countProduit; i++)
@@ -57,6 +70,8 @@ void printProduits(struct produit *allProduit)
     }
 }
 
+// ------------ Print single produit ----------------
+
 void printProduit(struct achat *allProduit, int x)
 {
     lineBreak();
@@ -69,6 +84,8 @@ void printProduit(struct achat *allProduit, int x)
     printf("\nQuantite: %d", allProduit[x].quantite);
     getch();
 }
+
+// ------------- print all product that's have quantity under 3 ------------------
 
 void printEtat(struct produit *allProduit, int x)
 {
@@ -87,10 +104,14 @@ void printEtat(struct produit *allProduit, int x)
     }
     else
     {
+        cleanConsole();
         system("color 4");
-        printf("Aucun produit !!");
+        printf("Aucun produit par se code .");
+        continu();
     }
 }
+
+// ------------- Print the order  ------------------
 
 void printAchat(struct achat *allAchat)
 {
@@ -103,6 +124,8 @@ void printAchat(struct achat *allAchat)
     printf("\nPrix TTC: %.2lf DHs", allAchat[countAchat - 1].prixTTC);
     getch();
 }
+
+// ------------- Add one or mutiple product ------------------
 
 void ajouterProduit(struct produit *allProduit)
 {
@@ -136,6 +159,8 @@ void ajouterProduit(struct produit *allProduit)
         scanf("%d", &a);
     } while (a == 1);
 }
+
+// ------------- Buy one product ------------------
 
 void acheterProduit(struct produit *allProduit, struct achat *allAchat)
 {
@@ -204,6 +229,8 @@ void acheterProduit(struct produit *allProduit, struct achat *allAchat)
     }
 }
 
+// ------------ Print sub menu to choose which sorting you want ----------------
+
 void listerProduits(struct produit *allProduit)
 {
     if (countProduit == 0)
@@ -239,6 +266,8 @@ void listerProduits(struct produit *allProduit)
     }
 }
 
+// --------------------- Sorting by price -----------------------
+
 void listerProduitsParPrix(struct produit *allProduit)
 {
     cleanConsole();
@@ -271,6 +300,8 @@ void listerProduitsParPrix(struct produit *allProduit)
     lineBreak();
     continu();
 }
+
+// --------------------- Sorting by name -----------------------
 
 void listerProduitsParNom(struct produit *allProduit)
 {
@@ -306,6 +337,8 @@ void listerProduitsParNom(struct produit *allProduit)
     continu();
 }
 
+// ------------------- Select all product that's have under 3 in quantity -----------------------
+
 void etatProduit(struct produit *allProduit)
 {
     if (countProduit == 0)
@@ -324,7 +357,7 @@ void etatProduit(struct produit *allProduit)
         int a = 0;
         for (int i = 0; i <= countProduit; i++)
         {
-            if (allProduit[i].quantite < 3 && countProduit != 0)
+            if (allProduit[i].quantite < 3)
             {
                 // copie le produit dans un variable temporaire
                 strcpy(etatProduit[a].nom, allProduit[i].nom);
@@ -342,6 +375,8 @@ void etatProduit(struct produit *allProduit)
         continu();
     }
 }
+
+// ------------------- Search for product by code -----------------------
 
 void rechercheProduit(struct produit *allProduit)
 {
@@ -379,6 +414,8 @@ void rechercheProduit(struct produit *allProduit)
         }
     }
 }
+
+// ------------------- Add quantity for product -----------------------
 
 void alimenterProduit(struct produit *allProduit)
 {
@@ -418,6 +455,8 @@ void alimenterProduit(struct produit *allProduit)
         }
     }
 }
+
+// ----------------------- Delete one product ------------------------
 
 void supprimerProduit(struct produit *allProduit)
 {
@@ -462,6 +501,8 @@ void supprimerProduit(struct produit *allProduit)
         }
     }
 }
+
+// -------------------------- Statistics  --------------------------------
 
 void statistique(struct produit *allProduit, struct achat *allAchat)
 {
@@ -544,6 +585,8 @@ void statistique(struct produit *allProduit, struct achat *allAchat)
         continu();
     }
 }
+
+// ------------------- Principal menu -----------------------
 
 void menu(struct produit *allProduit, struct achat *allAchat)
 {
