@@ -129,34 +129,58 @@ void printAchat(struct achat *allAchat)
 
 void ajouterProduit(struct produit *allProduit)
 {
-    int a;
+    int a, b = 1;
     do
     {
-
+        system("color 7");
+        struct produit tempo;
         cleanConsole();
         lineBreak();
         printf("\n*--------------Ajouter Produit------------*");
         lineBreak();
 
         printf("\nCode de produit\t: ");
-        scanf("%s", &allProduit[countProduit].code);
+        scanf("%s", &tempo.code);
 
         printf("Nom de produit\t: ");
-        scanf("%s", &allProduit[countProduit].nom);
+        scanf("%s", &tempo.nom);
 
         printf("Quantite de produit\t: ");
-        scanf("%d", &allProduit[countProduit].quantite);
+        scanf("%d", &tempo.quantite);
 
         printf("Prix de produit\t: ");
-        scanf("%f", &allProduit[countProduit].prix);
-
-        lineBreak();
-        countProduit++;
-        a = 0;
-        printf("\n     *  *  *  Produit ajoute!  *  *  *");
-        lineBreak();
-        printf("\nVoulez-vous ajouter un autre medicament? ( 1 pour oui)\n");
-        scanf("%d", &a);
+        scanf("%f", &tempo.prix);
+        if (countProduit > 0)
+        {
+            for (int i = 0; i < countProduit; i++)
+            {
+                if (strcmp(tempo.code, allProduit[i].code) == 0)
+                {
+                    b = 0;
+                }
+            }
+        }
+        if (b == 1)
+        {
+            allProduit[countProduit] = tempo;
+            lineBreak();
+            countProduit++;
+            a = 0;
+            printf("\n     *  *  *  Produit ajoute!  *  *  *");
+            lineBreak();
+            printf("\nVoulez-vous ajouter un autre medicament? ( 1 pour oui)\n");
+            scanf("%d", &a);
+        }
+        else
+        {
+            system("color 4");
+            cleanConsole();
+            lineBreak();
+            printf("\n*--------------Le code deja ajouter -------------*");
+            lineBreak();
+            continu();
+            break;
+        }
     } while (a == 1);
 }
 
@@ -275,10 +299,7 @@ void listerProduitsParPrix(struct produit *allProduit)
     struct produit temp;
     for (int i = 0; i < countProduit; i++)
     {
-        strcpy(triProduit[i].nom, allProduit[i].nom);
-        strcpy(triProduit[i].code, allProduit[i].code);
-        triProduit[i].prix = allProduit[i].prix;
-        triProduit[i].quantite = allProduit[i].quantite;
+        triProduit[i] = allProduit[i];
     }
 
     for (int i = 0; i < countProduit - 1; i++)
@@ -311,10 +332,7 @@ void listerProduitsParNom(struct produit *allProduit)
     struct produit temp;
     for (int i = 0; i < countProduit; i++)
     {
-        strcpy(triProduit[i].nom, allProduit[i].nom);
-        strcpy(triProduit[i].code, allProduit[i].code);
-        triProduit[i].prix = allProduit[i].prix;
-        triProduit[i].quantite = allProduit[i].quantite;
+        triProduit[i] = allProduit[i];
     }
 
     for (int i = 0; i < countProduit - 1; i++)
@@ -359,11 +377,8 @@ void etatProduit(struct produit *allProduit)
         {
             if (allProduit[i].quantite < 3)
             {
-                // copie le produit dans un variable temporaire
-                strcpy(etatProduit[a].nom, allProduit[i].nom);
-                strcpy(etatProduit[a].code, allProduit[i].code);
-                etatProduit[a].prix = allProduit[i].prix;
-                etatProduit[a].quantite = allProduit[i].quantite;
+                // copie le produit dans tableau de type produit
+                etatProduit[a] = allProduit[i];
                 a++;
             }
         }
@@ -486,10 +501,7 @@ void supprimerProduit(struct produit *allProduit)
         {
             for (int i = x; i < countProduit; i++)
             {
-                strcpy(allProduit[i].nom, allProduit[i + 1].nom);
-                strcpy(allProduit[i].code, allProduit[i + 1].code);
-                allProduit[i].prix = allProduit[i + 1].prix;
-                allProduit[i].quantite = allProduit[i + 1].quantite;
+                allProduit[i] = allProduit[i + 1];
             }
             countProduit--;
             cleanConsole();
@@ -596,7 +608,7 @@ void menu(struct produit *allProduit, struct achat *allAchat)
         system("color 7");
         cleanConsole();
         lineBreak();
-        printf("\n*------------------Menu-------------------*");
+        printf("\n*----------- PHARMACIE SAADA -------------*");
         lineBreak();
         printf("\n\t[1]- Ajouter produit .\n");
         printf("\t[2]- Lister tout les produits .\n");
