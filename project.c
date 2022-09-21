@@ -122,6 +122,7 @@ void printAchat(struct achat *allAchat)
     printf("\nCode\t: %s", allAchat[countAchat - 1].code);
     printf("\nPrix\t: %.2lf DHs", allAchat[countAchat - 1].prix);
     printf("\nPrix TTC: %.2lf DHs", allAchat[countAchat - 1].prixTTC);
+    printf("\nQuantite d\'achat: %d", allAchat[countAchat - 1].quantite);
     getch();
 }
 
@@ -176,7 +177,8 @@ void ajouterProduit(struct produit *allProduit)
             system("color 4");
             cleanConsole();
             lineBreak();
-            printf("\n*--------------Le code deja ajouter -------------*");
+            printf("\n*-----------Le code deja ajouter ---------*");
+
             lineBreak();
             continu();
             break;
@@ -621,38 +623,50 @@ void menu(struct produit *allProduit, struct achat *allAchat)
         printf("\t[9]- Exit .\n");
         printf("*-----------------------------------------*\n");
         printf("=>");
+
         scanf("%d", &a);
-        switch (a)
+        if (a > 0 && a < 10)
         {
-        case 1:
-            ajouterProduit(allProduit);
-            break;
-        case 2:
-            listerProduits(allProduit);
-            break;
-        case 3:
-            acheterProduit(allProduit, allAchat);
-            break;
-        case 4:
-            rechercheProduit(allProduit);
-            break;
-        case 5:
-            etatProduit(allProduit);
-            break;
-        case 6:
-            alimenterProduit(allProduit);
-            break;
-        case 7:
-            supprimerProduit(allProduit);
-            break;
-        case 8:
-            statistique(allProduit, allAchat);
-            break;
-        case 9:
-            exit(0);
-            break;
-        default:
-            break;
+            switch (a)
+            {
+            case 1:
+                ajouterProduit(allProduit);
+                break;
+            case 2:
+                listerProduits(allProduit);
+                break;
+            case 3:
+                acheterProduit(allProduit, allAchat);
+                break;
+            case 4:
+                rechercheProduit(allProduit);
+                break;
+            case 5:
+                etatProduit(allProduit);
+                break;
+            case 6:
+                alimenterProduit(allProduit);
+                break;
+            case 7:
+                supprimerProduit(allProduit);
+                break;
+            case 8:
+                statistique(allProduit, allAchat);
+                break;
+            case 9:
+                exit(0);
+                break;
+            }
+        }
+        else
+        {
+            system("color 4");
+            cleanConsole();
+            lineBreak();
+            printf("\n*--------Aucun Achat maintenant-----------*");
+            lineBreak();
+            continu();
+            // a = null;
         }
     } while (1);
 }
@@ -661,5 +675,6 @@ void main()
 {
     struct produit allProduit[100];
     struct achat allAchat[100];
+
     menu(&allProduit, &allAchat);
 }
