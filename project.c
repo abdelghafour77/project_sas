@@ -4,32 +4,40 @@
 #include <string.h>
 #include <time.h>
 
-/* ------------Global variables------------ */
-
+/*
+-----------------------------------------------------
+----------------- GLOBAL VARIABLES ------------------
+-----------------------------------------------------
+*/
 int countProduit = 0, second = 4, countAchat = 0;
 
-/* ----------------Structers--------------- */
-
+/*
+-----------------------------------------------------
+-------------------- STRUCTERS ----------------------
+-----------------------------------------------------
+*/
 struct produit
 {
     int quantite;
     float prix;
-    char nom[80], code[10];
+    char nom[80], code[20];
 };
 
 struct achat
 {
-  //  time_t t = time(NULL);
-
-
     int quantite;
     float prix, prixTTC;
     char nom[80], code[10];
- //   struct tm dateAchat = *localtime(&t);
+    int year, month, day;
 };
 
-/* ----------------Function---------------- */
+/*
+-----------------------------------------------------
+-------------------- FUNCTIONS ----------------------
+-----------------------------------------------------
+*/
 
+// ------------------- My function ------------------
 void lineBreak()
 {
     printf("\n*-----------------------------------------*");
@@ -46,6 +54,8 @@ void continu()
     getch();
 }
 
+// ------------ Print mutiple produit ---------------
+
 void printProduits(struct produit *allProduit)
 {
     for (int i = 0; i < countProduit; i++)
@@ -60,9 +70,10 @@ void printProduits(struct produit *allProduit)
     }
 }
 
+// ------------ Print single produit ----------------
+
 void printProduit(struct achat *allProduit, int x)
 {
-
     lineBreak();
     printf("\n*-----------Produit numero : %d -----------*", x + 1);
     lineBreak();
@@ -73,6 +84,8 @@ void printProduit(struct achat *allProduit, int x)
     printf("\nQuantite: %d", allProduit[x].quantite);
     getch();
 }
+
+// ------------- print all product that's have quantity under 3 ------------------
 
 void printEtat(struct produit *allProduit, int x)
 {
@@ -91,9 +104,14 @@ void printEtat(struct produit *allProduit, int x)
     }
     else
     {
-        printf("Vide !!");
+        cleanConsole();
+        system("color 4");
+        printf("Aucun produit par se code .");
+        continu();
     }
 }
+
+// ------------- Print the order  ------------------
 
 void printAchat(struct achat *allAchat)
 {
@@ -104,92 +122,146 @@ void printAchat(struct achat *allAchat)
     printf("\nCode\t: %s", allAchat[countAchat - 1].code);
     printf("\nPrix\t: %.2lf DHs", allAchat[countAchat - 1].prix);
     printf("\nPrix TTC: %.2lf DHs", allAchat[countAchat - 1].prixTTC);
- //   printf("\nDate: %d-%02d-%02d %02d:%02d:%02d", allAchat[countAchat - 1].dateAchat.tm_year + 1900, allAchat[countAchat - 1].dateAchat.tm_mon + 1, allAchat[countAchat - 1].dateAchat.tm_mday, allAchat[countAchat - 1].dateAchat.tm_hour, allAchat[countAchat - 1].dateAchat.tm_min, allAchat[countAchat - 1].dateAchat.tm_sec);
+    printf("\nQuantite d\'achat: %d", allAchat[countAchat - 1].quantite);
     getch();
 }
 
+// ------------- Add one or mutiple product ------------------
+
 void ajouterProduit(struct produit *allProduit)
 {
-    int a;
+    int a, b = 1;
     do
     {
-
+        system("color 7");
+        struct produit tempo;
         cleanConsole();
         lineBreak();
         printf("\n*--------------Ajouter Produit------------*");
         lineBreak();
 
         printf("\nCode de produit\t: ");
-        scanf("%s", &allProduit[countProduit].code);
+        scanf("%s", &tempo.code);
 
         printf("Nom de produit\t: ");
-        scanf("%s", &allProduit[countProduit].nom);
+        scanf("%s", &tempo.nom);
 
         printf("Quantite de produit\t: ");
-        scanf("%d", &allProduit[countProduit].quantite);
+        scanf("%d", &tempo.quantite);
 
         printf("Prix de produit\t: ");
-        scanf("%f", &allProduit[countProduit].prix);
+        scanf("%f", &tempo.prix);
+        if (countProduit > 0)
+        {
+            for (int i = 0; i < countProduit; i++)
+            {
+                if (strcmp(tempo.code, allProduit[i].code) == 0)
+                {
+                    b = 0;
+                }
+            }
+        }
+        if (b == 1)
+        {
+            allProduit[countProduit] = tempo;
+            lineBreak();
+            countProduit++;
+            a = 0;
+            printf("\n     *  *  *  Produit ajoute!  *  *  *");
+            lineBreak();
+            printf("\nVoulez-vous ajouter un autre medicament? ( 1 pour oui)\n");
+            scanf("%d", &a);
+        }
+        else
+        {
+            system("color 4");
+            cleanConsole();
+            lineBreak();
+            printf("\n*-----------Le code deja ajouter ---------*");
 
-        lineBreak();
-        countProduit++;
-        a = 0;
-        printf("\n***\tProduit ajoute! \t***");
-        lineBreak();
-        printf("\nVoulez-vous ajouter un autre medicament? ( 1 pour oui)\n");
-        scanf("%d", &a);
+            lineBreak();
+            continu();
+            break;
+        }
     } while (a == 1);
 }
 
+// ------------- Buy one product ------------------
+
 void acheterProduit(struct produit *allProduit, struct achat *allAchat)
 {
-    char code[20];
-    int quantite, indice;
-    printf("Saisir la code de produit : ");
-    scanf("%s", code);
-    printf("Saisir la quantite de produit : ");
-    scanf("%s", &quantite);
-    indice = updateProduit(allProduit, code, quantite);
-    if (indice >= 0)
+    if (countProduit == 0)
     {
-        strcpy(allAchat[countAchat].code, allProduit[indice].code);
-        strcpy(allAchat[countAchat].nom, allProduit[indice].nom);
-        allAchat[countAchat].prix = allProduit[indice].prix;
-        allAchat[countAchat].prixTTC = allProduit[indice].prix + (allProduit[indice].prix * 0.15);
-        allAchat[countAchat].quantite = quantite;
-   //     allAchat[countAchat].dateAchat = *localtime(&tm);
-
-        countAchat++;
-        printAchat(allAchat);
+        system("color 4");
+        cleanConsole();
+        lineBreak();
+        printf("\n*--------------Aucun Produit -------------*");
+        lineBreak();
+        continu();
     }
     else
     {
-        printf("Aucun produit par se code .");
-        getch();
+        char code[20];
+        int quantite, indice = -1;
+        printf("Saisir la code de produit : ");
+        scanf("%s", code);
+        printf("Saisir la quantite de produit : ");
+        scanf("%d", &quantite);
+
+        for (int i = 0; i < countProduit; i++)
+        {
+            if (strcmp(allProduit[i].code, code) == 0)
+            {
+                indice = i;
+            }
+        }
+        if (indice >= 0)
+        {
+            if (quantite > allProduit[indice].quantite)
+            {
+                cleanConsole();
+                system("color 4");
+                lineBreak();
+                printf("\nQauntite insuffisant !!");
+                lineBreak();
+                getch();
+            }
+            else
+            {
+                allProduit[indice].quantite -= quantite;
+
+                time_t seconds = time(NULL);
+                struct tm *current_time = localtime(&seconds);
+
+                strcpy(allAchat[countAchat].code, allProduit[indice].code);
+                strcpy(allAchat[countAchat].nom, allProduit[indice].nom);
+                allAchat[countAchat].prix = allProduit[indice].prix;
+                allAchat[countAchat].prixTTC = allProduit[indice].prix + (allProduit[indice].prix * 0.15);
+                allAchat[countAchat].quantite = quantite;
+                allAchat[countAchat].year = current_time->tm_year + 1900;
+                allAchat[countAchat].month = current_time->tm_mon + 1;
+                allAchat[countAchat].day = current_time->tm_mday;
+                countAchat++;
+                printAchat(allAchat);
+            }
+        }
+        else
+        {
+            cleanConsole();
+            system("color 4");
+            printf("Aucun produit par se code .");
+            continu();
+        }
     }
 }
 
-int updateProduit(struct produit *allProduit, char code[20], int quantit)
-{
-    int x = -1;
-    for (int i = 0; i < countProduit; i++)
-    {
-        if (strcmp(allProduit[i].code, code) == 0)
-        {
-            x = i;
-        }
-    }
-    if (x >= 0)
-    {
-        allProduit[x].quantite -= quantit;
-    }
-    return x;
-}
+// ------------ Print sub menu to choose which sorting you want ----------------
 
 void listerProduits(struct produit *allProduit)
 {
     if (countProduit == 0)
     {
+        system("color 4");
         cleanConsole();
         lineBreak();
         printf("\n*--------------Aucun Produit -------------*");
@@ -220,6 +292,8 @@ void listerProduits(struct produit *allProduit)
     }
 }
 
+// --------------------- Sorting by price -----------------------
+
 void listerProduitsParPrix(struct produit *allProduit)
 {
     cleanConsole();
@@ -227,10 +301,7 @@ void listerProduitsParPrix(struct produit *allProduit)
     struct produit temp;
     for (int i = 0; i < countProduit; i++)
     {
-        strcpy(triProduit[i].nom, allProduit[i].nom);
-        strcpy(triProduit[i].code, allProduit[i].code);
-        triProduit[i].prix = allProduit[i].prix;
-        triProduit[i].quantite = allProduit[i].quantite;
+        triProduit[i] = allProduit[i];
     }
 
     for (int i = 0; i < countProduit - 1; i++)
@@ -239,21 +310,9 @@ void listerProduitsParPrix(struct produit *allProduit)
         {
             if (triProduit[i].prix < triProduit[j].prix)
             {
-                // copie le produit dans un variable temporaire
-                strcpy(temp.nom, triProduit[i].nom);
-                strcpy(temp.code, triProduit[i].code);
-                temp.prix = triProduit[i].prix;
-                temp.quantite = triProduit[i].quantite;
-                // changer la variable
-                strcpy(triProduit[i].nom, triProduit[j].nom);
-                strcpy(triProduit[i].code, triProduit[j].code);
-                triProduit[i].prix = triProduit[j].prix;
-                triProduit[i].quantite = triProduit[j].quantite;
-                // changer la variable
-                strcpy(triProduit[j].nom, temp.nom);
-                strcpy(triProduit[j].code, temp.code);
-                triProduit[j].prix = temp.prix;
-                triProduit[j].quantite = temp.quantite;
+                temp = triProduit[i];
+                triProduit[i] = triProduit[j];
+                triProduit[j] = temp;
             }
         }
     }
@@ -264,6 +323,8 @@ void listerProduitsParPrix(struct produit *allProduit)
     lineBreak();
     continu();
 }
+
+// --------------------- Sorting by name -----------------------
 
 void listerProduitsParNom(struct produit *allProduit)
 {
@@ -273,10 +334,7 @@ void listerProduitsParNom(struct produit *allProduit)
     struct produit temp;
     for (int i = 0; i < countProduit; i++)
     {
-        strcpy(triProduit[i].nom, allProduit[i].nom);
-        strcpy(triProduit[i].code, allProduit[i].code);
-        triProduit[i].prix = allProduit[i].prix;
-        triProduit[i].quantite = allProduit[i].quantite;
+        triProduit[i] = allProduit[i];
     }
 
     for (int i = 0; i < countProduit - 1; i++)
@@ -285,21 +343,9 @@ void listerProduitsParNom(struct produit *allProduit)
         {
             if (triProduit[i].nom[0] > triProduit[j].nom[0])
             {
-                // copie le produit dans un variable temporaire
-                strcpy(temp.nom, triProduit[i].nom);
-                strcpy(temp.code, triProduit[i].code);
-                temp.prix = triProduit[i].prix;
-                temp.quantite = triProduit[i].quantite;
-                // changer la variable
-                strcpy(triProduit[i].nom, triProduit[j].nom);
-                strcpy(triProduit[i].code, triProduit[j].code);
-                triProduit[i].prix = triProduit[j].prix;
-                triProduit[i].quantite = triProduit[j].quantite;
-                // changer la variable
-                strcpy(triProduit[j].nom, temp.nom);
-                strcpy(triProduit[j].code, temp.code);
-                triProduit[j].prix = temp.prix;
-                triProduit[j].quantite = temp.quantite;
+                temp = triProduit[i];
+                triProduit[i] = triProduit[j];
+                triProduit[j] = temp;
             }
         }
     }
@@ -311,178 +357,316 @@ void listerProduitsParNom(struct produit *allProduit)
     continu();
 }
 
+// ------------------- Select all product that's have under 3 in quantity -----------------------
+
 void etatProduit(struct produit *allProduit)
 {
-    cleanConsole();
-    struct produit etatProduit[100];
-    int a = 0;
-    for (int i = 0; i <= countProduit; i++)
+    if (countProduit == 0)
     {
-        if (allProduit[i].quantite < 3 && countProduit != 0)
-        {
-            // copie le produit dans un variable temporaire
-            strcpy(etatProduit[a].nom, allProduit[i].nom);
-            strcpy(etatProduit[a].code, allProduit[i].code);
-            etatProduit[a].prix = allProduit[i].prix;
-            etatProduit[a].quantite = allProduit[i].quantite;
-            a++;
-        }
+        system("color 4");
+        cleanConsole();
+        lineBreak();
+        printf("\n*--------------Aucun Produit -------------*");
+        lineBreak();
+        continu();
     }
+    else
+    {
+        cleanConsole();
+        struct produit etatProduit[100];
+        int a = 0;
+        for (int i = 0; i <= countProduit; i++)
+        {
+            if (allProduit[i].quantite < 3)
+            {
+                // copie le produit dans tableau de type produit
+                etatProduit[a] = allProduit[i];
+                a++;
+            }
+        }
 
-    printEtat(&etatProduit, a);
+        printEtat(&etatProduit, a);
 
-    lineBreak();
-    lineBreak();
-    continu();
+        lineBreak();
+        lineBreak();
+        continu();
+    }
 }
+
+// ------------------- Search for product by code -----------------------
 
 void rechercheProduit(struct produit *allProduit)
 {
-    int x = -1;
-    char code[30];
-    printf("\nSaisir le code de produit: ");
-    scanf("%s", code);
-    for (int i = 0; i < countProduit; i++)
+    if (countProduit == 0)
     {
-        if (strcmp(allProduit[i].code, code) == 0)
-        {
-            x = i;
-        }
-    }
-
-    if (x >= 0)
-    {
-        printProduit(allProduit, x);
+        system("color 4");
+        cleanConsole();
+        lineBreak();
+        printf("\n*--------------Aucun Produit -------------*");
+        lineBreak();
+        continu();
     }
     else
     {
-        printf("Erreur");
-        getch;
+        int x = -1;
+        char code[20];
+        printf("\nSaisir le code de produit: ");
+        scanf("%s", code);
+        for (int i = 0; i < countProduit; i++)
+        {
+            if (strcmp(allProduit[i].code, code) == 0)
+            {
+                x = i;
+            }
+        }
+        if (x >= 0)
+        {
+            printProduit(allProduit, x);
+        }
+        else
+        {
+            system("color 4");
+            printf("Erreur");
+            getch;
+        }
     }
 }
+
+// ------------------- Add quantity for product -----------------------
 
 void alimenterProduit(struct produit *allProduit)
 {
-    char code[30];
-    int qunatite, x = -1;
-    printf("\nSaisie le code de produit : ");
-    scanf("%s", code);
-    printf("Saisir la qunatite : ");
-    scanf("%d", &qunatite);
-    for (int i = 0; i < countProduit; i++)
+    if (countProduit == 0)
     {
-        if (strcmp(allProduit[i].code, code) == 0)
-        {
-            x = i;
-        }
-    }
-    if (x >= 0)
-    {
-        allProduit[x].quantite += qunatite;
+        system("color 4");
+        cleanConsole();
+        lineBreak();
+        printf("\n*--------------Aucun Produit -------------*");
+        lineBreak();
+        continu();
     }
     else
     {
-        printf("Aucun produit par se code.");
-        getch();
+        char code[20];
+        int qunatite, x = -1;
+        printf("\nSaisie le code de produit : ");
+        scanf("%s", code);
+        printf("Saisir la qunatite : ");
+        scanf("%d", &qunatite);
+        for (int i = 0; i < countProduit; i++)
+        {
+            if (strcmp(allProduit[i].code, code) == 0)
+            {
+                x = i;
+            }
+        }
+        if (x >= 0)
+        {
+            allProduit[x].quantite += qunatite;
+        }
+        else
+        {
+            system("color 4");
+            printf("Aucun produit par se code.");
+            getch();
+        }
     }
 }
+
+// ----------------------- Delete one product ------------------------
 
 void supprimerProduit(struct produit *allProduit)
 {
-    char code[30];
-    int x = -1;
-    printf("Saisir le code de produit pour supprimer : ");
-    scanf("%s", code);
-    for (int i = 0; i < countProduit; i++)
+    if (countProduit == 0)
     {
-        if (strcmp(allProduit[i].code, code) == 0)
-        {
-            x = i;
-        }
-    }
-    if (x >= 0)
-    {
-        for (int i = x; i < countProduit; i++)
-        {
-            strcpy(allProduit[i].nom, allProduit[i + 1].nom);
-            strcpy(allProduit[i].code, allProduit[i + 1].code);
-            allProduit[i].prix = allProduit[i + 1].prix;
-            allProduit[i].quantite = allProduit[i + 1].quantite;
-        }
-        countProduit--;
+        system("color 4");
         cleanConsole();
         lineBreak();
-        printf("\nLe produit '%s' est supprimer avec succes", code);
+        printf("\n*--------------Aucun Produit -------------*");
         lineBreak();
-        getch();
+        continu();
+    }
+    else
+    {
+        char code[20];
+        int x = -1;
+        printf("Saisir le code de produit pour supprimer : ");
+        scanf("%s", code);
+        for (int i = 0; i < countProduit; i++)
+        {
+            if (strcmp(allProduit[i].code, code) == 0)
+            {
+                x = i;
+            }
+        }
+        if (x >= 0)
+        {
+            for (int i = x; i < countProduit; i++)
+            {
+                allProduit[i] = allProduit[i + 1];
+            }
+            countProduit--;
+            cleanConsole();
+            lineBreak();
+            system("color 2");
+            printf("\nLe produit '%s' est supprimer avec succes", code);
+            lineBreak();
+            getch();
+        }
     }
 }
 
+// -------------------------- Statistics  --------------------------------
+
 void statistique(struct produit *allProduit, struct achat *allAchat)
 {
-    float totalAchat = 0;
-  //  for (int i = 0; i < countAchat; i++)
-    //{
-      //  if (allAchat[i].dateAchat == *localtime(&t))
-        //{
-          //  totalAchat += allAchat[i].dateAchat;
-//        }
-  //  }
-    printf("%.2lf", totalAchat);
+    if (countAchat != 0)
+    {
+        float totalAchat = 0, totalAchatTTC = 0, quantite = 0, minAchatQuantite = 0, maxAchatQuantite = 0;
+        int year, day, month, prixMin, prixMax;
+        prixMin = allAchat[0].prix;
+        prixMax = allAchat[0].prix;
+        char indiceMin[20], indiceMax[20], nomMax[80], nomMin[80];
+        time_t seconds = time(NULL);
+        struct tm *current_time = localtime(&seconds);
+        year = current_time->tm_year + 1900;
+        month = current_time->tm_mon + 1;
+        day = current_time->tm_mday;
+        for (int i = 0; i < countAchat; i++)
+        {
+            if (allAchat[i].year == year && allAchat[i].month == month && allAchat[i].day == day)
+            {
+                totalAchat += allAchat[i].prix * allAchat[i].quantite;
+                totalAchatTTC += allAchat[i].prixTTC * allAchat[i].quantite;
+                quantite += allAchat[i].quantite;
+
+                if (allAchat[i].prix <= prixMin)
+                {
+                    prixMin = allAchat[i].prix;
+                    strcpy(nomMin, allAchat[i].nom);
+                }
+                if (allAchat[i].prix >= prixMax)
+                {
+                    prixMax = allAchat[i].prix;
+                    strcpy(nomMax, allAchat[i].nom);
+                }
+            }
+        }
+        for (int i = 0; i < countAchat; i++)
+        {
+
+            if (strcmp(allAchat[i].nom, nomMin) == 0)
+            {
+                minAchatQuantite += allAchat[i].quantite;
+                strcpy(nomMin, allAchat[i].nom);
+            }
+            if (strcmp(allAchat[i].nom, nomMax) == 0)
+            {
+                maxAchatQuantite += allAchat[i].quantite;
+                strcpy(nomMax, allAchat[i].nom);
+            }
+        }
+
+        lineBreak();
+        printf("\nLe total des prix des produits vendus en journee courante");
+        lineBreak();
+        printf("\nTotal: %.2lf\nTotalTTC: %.2lf", totalAchat, totalAchatTTC);
+
+        lineBreak();
+        printf("\nLa moyenne des prix des produits vendus en journee courante");
+        lineBreak();
+        printf("\nMoyen total: %.2lf\nMoyen total TTC: %.2lf\n", totalAchat / quantite, totalAchatTTC / quantite);
+
+        lineBreak();
+        printf("\nLe Max des prix des produits vendus en journee courante");
+        lineBreak();
+        printf("\nLe nom du produit : %s\nLe total : %.2lf\n\nLe total TTC: %.2lf\n", nomMax, maxAchatQuantite * prixMax, maxAchatQuantite * prixMax * 0.15);
+
+        lineBreak();
+        printf("\nLe Min des prix des produits vendus en journee courante");
+        lineBreak();
+        printf("\nLe nom du produit : %s\nLe total : %.2lf\n\nLe total TTC: %.2lf\n", nomMin, minAchatQuantite * prixMin, minAchatQuantite * prixMin * 0.15);
+
+        continu();
+    }
+    else
+    {
+        system("color 4");
+        cleanConsole();
+        lineBreak();
+        printf("\n*--------Aucun Achat maintenant-----------*");
+        lineBreak();
+        continu();
+    }
 }
+
+// ------------------- Principal menu -----------------------
 
 void menu(struct produit *allProduit, struct achat *allAchat)
 {
     int a;
     do
     {
+        system("color 7");
         cleanConsole();
         lineBreak();
-        printf("\n*------------------Menu-------------------*");
+        printf("\n*----------- PHARMACIE SAADA -------------*");
         lineBreak();
-        printf("\n\t1- Ajouter produit .\n");
-        printf("\t2- Lister tout les produits .\n");
-        printf("\t3- Acheter un produit .\n");
-        printf("\t4- Recherche .\n");
-        printf("\t5- Etat du stock .\n");
-        printf("\t6- Alimenter le stock .\n");
-        printf("\t7- Supprimer un produit .\n");
-        printf("\t8- Statistique de vente .\n");
-        printf("\t9- Exit .\n");
+        printf("\n\t[1]- Ajouter produit .\n");
+        printf("\t[2]- Lister tout les produits .\n");
+        printf("\t[3]- Acheter un produit .\n");
+        printf("\t[4]- Recherche .\n");
+        printf("\t[5]- Etat du stock .\n");
+        printf("\t[6]- Alimenter le stock .\n");
+        printf("\t[7]- Supprimer un produit .\n");
+        printf("\t[8]- Statistique de vente .\n");
+        printf("\t[9]- Exit .\n");
         printf("*-----------------------------------------*\n");
         printf("=>");
+
         scanf("%d", &a);
-        switch (a)
+        if (a > 0 && a < 10)
         {
-        case 1:
-            ajouterProduit(allProduit);
-            break;
-        case 2:
-            listerProduits(allProduit);
-            break;
-        case 3:
-            acheterProduit(allProduit, allAchat);
-            break;
-        case 4:
-            rechercheProduit(allProduit);
-            break;
-        case 5:
-            etatProduit(allProduit);
-            break;
-        case 6:
-            alimenterProduit(allProduit);
-            break;
-        case 7:
-            supprimerProduit(allProduit);
-            break;
-        case 8:
-            statistique(allProduit, allAchat);
-            break;
-        case 9:
-            exit(0);
-            break;
-        default:
-            break;
+            switch (a)
+            {
+            case 1:
+                ajouterProduit(allProduit);
+                break;
+            case 2:
+                listerProduits(allProduit);
+                break;
+            case 3:
+                acheterProduit(allProduit, allAchat);
+                break;
+            case 4:
+                rechercheProduit(allProduit);
+                break;
+            case 5:
+                etatProduit(allProduit);
+                break;
+            case 6:
+                alimenterProduit(allProduit);
+                break;
+            case 7:
+                supprimerProduit(allProduit);
+                break;
+            case 8:
+                statistique(allProduit, allAchat);
+                break;
+            case 9:
+                exit(0);
+                break;
+            }
+        }
+        else
+        {
+            system("color 4");
+            cleanConsole();
+            lineBreak();
+            printf("\n*--------Aucun Achat maintenant-----------*");
+            lineBreak();
+            continu();
+            // a = null;
         }
     } while (1);
 }
@@ -491,8 +675,6 @@ void main()
 {
     struct produit allProduit[100];
     struct achat allAchat[100];
-    // time_t t = time(NULL);
-    //   time_t t; // not a primitive datatype
-    // time(&t);
+
     menu(&allProduit, &allAchat);
 }
