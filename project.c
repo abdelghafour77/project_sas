@@ -72,7 +72,7 @@ void printProduits(struct produit *allProduit)
 
 // ------------ Print single produit ----------------
 
-void printProduit(struct achat *allProduit, int x)
+void printProduit(struct produit *allProduit, int x)
 {
     lineBreak();
     printf("\n*-----------Produit numero : %d -----------*", x + 1);
